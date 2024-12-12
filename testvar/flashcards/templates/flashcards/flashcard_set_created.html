@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcard Set Created</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Success!</h1>
+        <p>Your flashcard set has been created successfully.</p>
+        <div class="buttons">
+            <!-- Link to view the newly created set -->
+            <a href="{% url 'study_flashcard_set' set_id %}" class="btn btn-primary">View the Set</a>
+            
+            <!-- Link to go back to the list of all sets -->
+            <a href="{% url 'list_flashcard_sets' %}" class="btn btn-secondary">Back to All Sets</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Flashcards</title>
+    
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script>
+        function flipCard(card) {
+            card.classList.toggle("flipped");
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <!-- Heading and Back Button -->
+        <div class="header">
+            <h1>{{ flashcard_set.title }}</h1>
+            <a href="{% url 'home' %}" class="back-button">Back to Home</a> <!-- Back to Home Button -->
+        </div>
+
+        <hr>
+
+        <!-- Flashcard Creation Form -->
+        <section class="flashcard-creation">
+            {% if user.is_authenticated %}
+                <h3>Create a New Flashcard</h3>
+                <form method="POST">
+                    {% csrf_token %}
+                    <label for="question">Question:</label>
+                    <textarea name="question" id="question" rows="3" placeholder="Enter your question"></textarea>
+                    
+                    <label for="answer">Answer:</label>
+                    <textarea name="answer" id="answer" rows="3" placeholder="Enter the answer"></textarea>
+                    
+                    <button type="submit">Create Flashcard</button>
+                </form>
+            {% else %}
+                <p>You need to be logged in to create a flashcard.</p>
+            {% endif %}
+        </section>
+
+        <hr>
+
+        <!-- Display Flashcards -->
+        <section class="flashcards-display">
+            <h3>Flashcards</h3>
+            <div class="flashcards-container">
+                {% for card in flashcards %}
+                    <div class="dm-flip-card2" onclick="flipCard(this)">
+                        <!-- Front of the card (question) -->
+                        <div class="dm-front-card2">
+                            {{ card.question }}
+                        </div>
+        
+                        <!-- Back of the card (answer) -->
+                        <div class="dm-back-card2">
+                            {{ card.answer }}
+                        </div>
+
+                        <!-- Edit and Delete options (center bottom) -->
+                        {% if card.created_by == user %}
+                            <div class="flashcard-actions">
+                                <a href="{% url 'edit_flashcard' set_id=flashcard_set.id flashcard_id=card.id %}">Edit</a> |
+                                <a href="{% url 'delete_flashcard' set_id=flashcard_set.id flashcard_id=card.id %}">Delete</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <hr id="flashcard-last-line">
+
+        <!-- Reviews Section -->
+        <section class="reviews">
+            <h3>Reviews</h3>
+            <div class="reviews-container">
+                {% if ratings %}
+                    {% for rating in ratings %}
+                        <div class="review">
+                            <strong>{{ rating.user.username }}:</strong>
+                            <span>{{ rating.stars }} stars</span><br>
+                            <small>{{ rating.created_at }}</small><br>
+                            <p>{{ rating.comment }}</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No reviews yet. Be the first to leave a review!</p>
+                {% endif %}
+            </div>
+        </section>
+
+        <hr>
+
+        <!-- Average Rating -->
+        <div class="average-rating">
+            <h4>Average Rating: 
+                {% if average_rating %}
+                    {{ average_rating|floatformat:1 }} / 5
+                {% else %}
+                    No ratings yet.
+                {% endif %}
+            </h4>
+        </div>
+
+        <!-- Rating Form -->
+        {% if user.is_authenticated %}
+            <section class="rating-form">
+                <h3>Leave a Review</h3>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="stars">Rating (1-5 stars):</label>
+                        {{ review_form.stars }}
+                    </div>
+                    <div class="form-group">
+                        <label for="comment">Comment:</label>
+                        {{ review_form.comment }}
+                    </div>
+                    <button type="submit">Submit Review</button>
+                </form>
+            </section>
+        {% else %}
+            <p>You need to be logged in to leave a review.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

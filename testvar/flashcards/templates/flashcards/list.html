@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Flashcard Sets</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Browse Flashcard Sets</h1>
+        <hr>
+        <div class="flashcard-sets">
+            {% for set in sets %}
+                <div class="flashcard-set">
+                    <a href="{% url 'study_flashcard_set' set.id %}">
+                        <h2>{{ set.title }}</h2>
+                        <p>{{ set.description }}</p>
+                        <p><small>Created by {{ set.user.username }} on {{ set.created_at }}</small></p>
+                        {% if set.average_rating %}
+                            <p>Average Rating: {{ set.average_rating|floatformat:1 }} / 5</p>
+                        {% else %}
+                            <p>No reviews yet.</p>
+                        {% endif %}
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+        <a href="{% url 'create_flashcard_set' %}" class="create-set-button">Create New Set</a>
+    </div>
+</body>
+</html>
